@@ -7,7 +7,7 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs'],
+    ignores: ['eslint.config.mjs', 'lint-staged.config.cjs'],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
@@ -93,13 +93,11 @@ export default tseslint.config(
       'prettier/prettier': [
         'error',
         {
-          'endOfLine': 'auto'
+          'endOfLine': 'auto',
         }
       ],
       // --- import rules ---
       "import/named": "off",
-      "import/no-default-export": "error",
-      "import/prefer-default-export": "off",
       'import/order': [
         'error',
         {
