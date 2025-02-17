@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
 import { AllConfigType, configKey } from './config/config.type';
+import setupSwagger from './utils/setup-swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,6 +13,9 @@ async function bootstrap() {
   const { host, port } = configService.getOrThrow(configKey.app, {
     infer: true,
   });
+
+  // Setup Swagger
+  setupSwagger(app);
 
   // Start the application
   await app.listen(port, () =>
