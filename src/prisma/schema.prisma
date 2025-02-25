@@ -14,3 +14,12 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model accounts {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique(map: "uk_accounts_email") @db.VarChar(255)
+  password_hash String   @db.VarChar(255)
+  is_locked     Boolean  @default(false)
+  created_at    DateTime @default(now()) @db.Timestamp(0)
+  updated_at    DateTime @default(now()) @db.Timestamp(0)
+}
