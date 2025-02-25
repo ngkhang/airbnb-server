@@ -1,3 +1,4 @@
+import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 
@@ -13,6 +14,9 @@ async function bootstrap() {
   const { host, port } = configService.getOrThrow(configKey.app, {
     infer: true,
   });
+
+  // ValidationPipe
+  app.useGlobalPipes(new ValidationPipe());
 
   // Setup Swagger
   setupSwagger(app);

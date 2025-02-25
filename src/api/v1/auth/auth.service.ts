@@ -10,8 +10,10 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { passwordUtil } from 'src/utils/password.util';
 
-import { SignInDto } from './dto/sign-in.dto';
-import { SignUpDto } from './dto/sign-up.dto';
+import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
+import { AuthRegisterDto } from './dto/auth-register.dto';
+import { LoginResponseDto } from './dto/login-response.dto';
+import { RegisterResponseDto } from './dto/register-response.dto';
 
 export interface User {
   id: number;
@@ -22,12 +24,6 @@ export interface User {
   updated_at: Date;
 }
 
-export interface ResponseBase<T> {
-  message: string;
-  content: T;
-}
-export type ResponseApi<T> = Promise<{ message: string; content: T }>;
-
 @Injectable()
 export class AuthService {
   constructor(
@@ -35,31 +31,29 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(
-    signInDto: SignInDto,
-  ): ResponseApi<{ user: User; accessToken: string }> {
+  async login(loginDto: AuthEmailLoginDto): Promise<LoginResponseDto> {
     const user = await this.prismaService.accounts.findUnique({
       where: {
-        email: signInDto.email,
+        email: loginDto.email,
       },
     });
 
     if (!user)
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
-        message: 'Email is not exist',
+        message: 'Email not registered',
         content: null,
       });
 
-    const isCorrectPassword = passwordUtil.isMatch(
-      signInDto.password,
+    const isValidPassword = passwordUtil.isMatch(
+      loginDto.password,
       user.password_hash,
     );
 
-    if (!isCorrectPassword)
+    if (!isValidPassword)
       throw new UnauthorizedException({
         statusCode: HttpStatus.UNAUTHORIZED,
-        message: 'Password is not correct',
+        message: 'Incorrect password',
         content: null,
       });
 
@@ -69,41 +63,43 @@ export class AuthService {
     };
 
     return {
-      message: 'Login successfully',
+      message: 'Login successful',
       content: {
         user: {
           ...user,
           password_hash: '',
         },
-        accessToken: await this.jwtService.signAsync(payload),
+        token: await this.jwtService.signAsync(payload),
       },
     };
   }
 
-  async signUp(signUpDto: SignUpDto): ResponseApi<User> {
+  async register(
+    authRegisterDto: AuthRegisterDto,
+  ): Promise<RegisterResponseDto> {
     const isExistEmail = await this.prismaService.accounts.findUnique({
       where: {
-        email: signUpDto.email,
+        email: authRegisterDto.email,
       },
     });
 
     if (isExistEmail)
       throw new ConflictException({
         statusCode: HttpStatus.CONFLICT,
-        message: ' Email is exist',
+        message: 'Email is already registered',
         content: null,
       });
 
-    const result = await this.prismaService.accounts.create({
+    await this.prismaService.accounts.create({
       data: {
-        email: signUpDto.email,
-        password_hash: passwordUtil.hash(signUpDto.password),
+        email: authRegisterDto.email,
+        password_hash: passwordUtil.hash(authRegisterDto.password),
       },
     });
 
     return {
-      message: 'Create a new account successful',
-      content: { ...result, password_hash: '' },
+      message: 'Registered successfully',
+      content: null,
     };
   }
 }
