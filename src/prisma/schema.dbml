@@ -6,3 +6,12 @@ Project "Airbnb Clone" {
   database_type: 'MySQL'
   Note: ''
 }
+
+Table accounts {
+  id Int [pk, increment]
+  email String [unique, not null]
+  password_hash String [not null]
+  is_locked Boolean [not null, default: false]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [default: `now()`, not null]
+}
