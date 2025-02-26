@@ -31,7 +31,6 @@ const setupSwagger = (app: INestApplication): void => {
       },
       'Token',
     )
-    .addServer(url, 'Development')
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);

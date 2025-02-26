@@ -15,15 +15,6 @@ import { AuthRegisterDto } from './dto/auth-register.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
 import { RegisterResponseDto } from './dto/register-response.dto';
 
-export interface User {
-  id: number;
-  email: string;
-  password_hash: string;
-  is_locked: boolean;
-  created_at: Date;
-  updated_at: Date;
-}
-
 @Injectable()
 export class AuthService {
   constructor(
@@ -43,6 +34,7 @@ export class AuthService {
         statusCode: HttpStatus.NOT_FOUND,
         message: 'Email not registered',
         content: null,
+        dateTime: new Date(),
       });
 
     const isValidPassword = passwordUtil.isMatch(
@@ -55,6 +47,7 @@ export class AuthService {
         statusCode: HttpStatus.UNAUTHORIZED,
         message: 'Incorrect password',
         content: null,
+        dateTime: new Date(),
       });
 
     const payload = {
@@ -63,6 +56,7 @@ export class AuthService {
     };
 
     return {
+      statusCode: HttpStatus.OK,
       message: 'Login successful',
       content: {
         user: {
@@ -71,6 +65,7 @@ export class AuthService {
         },
         token: await this.jwtService.signAsync(payload),
       },
+      dateTime: new Date(),
     };
   }
 
@@ -88,6 +83,7 @@ export class AuthService {
         statusCode: HttpStatus.CONFLICT,
         message: 'Email is already registered',
         content: null,
+        dateTime: new Date(),
       });
 
     await this.prismaService.accounts.create({
@@ -98,8 +94,10 @@ export class AuthService {
     });
 
     return {
+      statusCode: HttpStatus.CREATED,
       message: 'Registered successfully',
       content: null,
+      dateTime: new Date(),
     };
   }
 }
