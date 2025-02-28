@@ -10,6 +10,8 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
+import { SkipAuth } from 'src/decorators/skip-auth.decorator';
+
 import { AuthService } from './auth.service';
 import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
 import { AuthRegisterDto } from './dto/auth-register.dto';
@@ -17,6 +19,7 @@ import { LoginResponseDto } from './dto/login-response.dto';
 import { RegisterResponseDto } from './dto/register-response.dto';
 
 @ApiTags('Auth')
+@SkipAuth()
 @Controller('api/v1/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
