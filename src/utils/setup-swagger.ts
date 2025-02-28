@@ -4,6 +4,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AllConfigType, configKey } from 'src/config/config.type';
 
+import { API_BEARER_KEY } from './constants';
+
 const setupSwagger = (app: INestApplication): void => {
   const configService = app.get(ConfigService<AllConfigType>);
   const { version, docs, prefix, domain } = configService.getOrThrow(
@@ -29,7 +31,7 @@ const setupSwagger = (app: INestApplication): void => {
         scheme: 'bearer',
         description: 'Enter your JWT token',
       },
-      'Token',
+      API_BEARER_KEY,
     )
     .build();
 

@@ -14,6 +14,7 @@ import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
 import { AuthRegisterDto } from './dto/auth-register.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
 import { RegisterResponseDto } from './dto/register-response.dto';
+import { JwtPayloadType } from './strategies/types/jwt-payload.type';
 
 @Injectable()
 export class AuthService {
@@ -50,8 +51,8 @@ export class AuthService {
         dateTime: new Date(),
       });
 
-    const payload = {
-      sub: user.id,
+    const payload: JwtPayloadType = {
+      userId: user.id,
       email: user.email,
     };
 
